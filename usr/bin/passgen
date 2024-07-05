@@ -1,23 +1,21 @@
 #!/bin/bash
 
-#init flags for options
-
-#-o for output
-#this flag will save in custom path our current directory
+# Init flags for options
 path=$PWD/file.txt
 flag_o=false
-
 specialChar='!@#$%^&*()_+[]{}|;:,.<>?'
 uppercaseChar='A-Z'
 lowrcaseChar='a-z'
 numChar='0-9'
 len=16
+help=false
+clipboard=false
 
-#handle parameters and options
-set -- $(getopt -q no:sl:UL "$@")
+# Handle parameters and options
+set -- $(getopt -q no:sl:ULch "$@")
 for param in $@; do
 	case $param in
-	-n) numChar= ;; #no number char
+	-n) numChar= ;; # No number char
 	-o)
 		if [[ -n "$2" && "$2" != -* ]]; then
 			path="$2"
@@ -27,24 +25,49 @@ for param in $@; do
 			shift
 		fi
 		flag_o=true
-		;;                 #output
-	-s) specialChar= ;; #no special char
+		;;                 # Output
+	-s) specialChar= ;; # No special char
 	-U) uppercaseChar= ;;
 	-L) lowrcaseChar= ;;
-	-l) len=$2 ;; # len of password
+	-l)
+		len=$2
+		shift
+		;; # Length of password
+	-c) clipboard=true ;;
+	-h | --help) help=true ;;
 	esac
 	shift
 done
 len=${len//\'/}
 path=${path//\'/}
 
-#result depend on options
-codingChar=$uppercaseChar$lowrcaseChar$numChar$specialChar
-
-random_string=$(head /dev/urandom | tr -dc $codingChar | head -c $len)
-if $flag_o; then
-	echo "$random_string" >$path
-	echo "Your password has been successfully saved in the default or given path"
-else
-	echo $random_string
+# Help section
+if $help; then
+	echo "Usage: $0 [options]"
+	echo "Options:"
+	echo "  -n                Exclude numbers from the password"
+	echo "  -o <path>         Specify the output file path (default is ./file.txt)"
+	echo "  -s                Exclude special characters from the password"
+	echo "  -U                Exclude uppercase characters from the password"
+	echo "  -L                Exclude lowercase characters from the password"
+	echo "  -c                Copy the generated password to the clipboard"
+	echo "  -l <length>       Specify the length of the password (default is 16)"
+	echo "  -h, --help        Display this help message and exit"
+	exit 0
 fi
+
+# Result depends on options
+codingChar=$uppercaseChar$lowrcaseChar$numChar$specialChar
+random_string=$(head /dev/urandom | tr -dc $codingChar | head -c $len)
+
+if $flag_o; then
+	echo "$random_string" >"$path"
+	echo "Your password has been successfully saved in the default or given path"
+fi
+
+if $clipboard; then
+	echo "$random_string" | xclip -selection clipboard
+fi
+
+# Output the password to the terminal
+echo "$random_string"
