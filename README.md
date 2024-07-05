@@ -17,4 +17,4 @@ This repository contains a Bash script for generating random passwords with cust
 To generate a password with the default settings (16 characters including uppercase, lowercase, numbers, and special characters):
 
 ```bash
-./passgen.sh
+passgen
