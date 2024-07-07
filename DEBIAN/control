@@ -6,5 +6,6 @@ Priority: optional
 Depends: xclip
 Maintainer: Ahad Fallah
 Description: Passgen is an open-source command-line utility designed to generate secure passwords with various customizable options.
+License: GPL-3+
 
 
