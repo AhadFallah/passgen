@@ -18,6 +18,7 @@ To generate a password with the default settings (16 characters including upperc
 
 ```bash
 passgen
+```
 
 ## License
 
