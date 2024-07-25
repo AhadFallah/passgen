@@ -86,4 +86,9 @@ if $clipboard; then
 fi
 
 # Output the password to the terminal
-echo "$random_string"
+
+if [[ "$clipboard" != true ]] && [[ "$flag_o" != true ]]; then
+
+	echo "$random_string"
+
+fi
